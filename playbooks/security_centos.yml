@@ -1,0 +1,38 @@
+---
+
+- name: Configurar firewalld en CentOS
+  hosts: webapp
+  become: true
+  user: sysadmin
+
+  tasks:
+  - name: Instalar firewalld
+    ansible.builtin.dnf:
+      name: firewalld
+      state: present
+
+  - name: Abrir puerto SSH
+    ansible.posix.firewalld:
+      port: 22/tcp
+      permanent: yes
+      state: enabled
+    notify: Reiniciar firewalld para aplicar los cambios
+
+  - name: Abrir puerto del tomcat
+    ansible.posix.firewalld:
+      port: 8080/tcp
+      permanent: yes
+      state: enabled
+    notify: Reiniciar firewalld para aplicar los cambios
+
+  - name: Asegurarse de que firewalld esté en ejecución
+    ansible.builtin.systemd:
+      name: firewalld
+      state: started
+      enabled: yes
+
+  handlers:
+  - name: Reiniciar firewalld para aplicar los cambios
+    ansible.builtin.service:
+      name: firewalld
+      state: reloaded

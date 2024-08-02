@@ -1,0 +1,36 @@
+---
+
+- name: Habilitar y configurar UFW en Ubuntu
+  hosts: database
+  become: true
+  user: sysadmin
+  
+  tasks:
+
+  - name: UFW instalado 
+    ansible.builtin.apt:
+      name: ufw
+      state: present
+
+  - name: Activar el puerto 22
+    community.general.ufw:
+      rule: allow
+      name: OpenSSH
+
+  - name: Defino politicas in
+    community.general.ufw:
+      policy: deny
+      direction: incoming
+      state: enabled
+
+  - name: Defino politicas out
+    community.general.ufw:
+      policy: allow
+      direction: outgoing
+      state: enabled
+
+  - name: servicio ufw levantado y activo
+    ansible.builtin.systemd.service:
+      name: ufw
+      state: started
+      enabled: true
