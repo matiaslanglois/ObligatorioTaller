@@ -1,0 +1,71 @@
+---
+
+- name: Instalar y asegurar MariaDB
+  hosts: database
+  become: true
+  user: sysadmin
+
+  tasks:
+
+  - name: Instalar el paquete de MariaDB
+    ansible.builtin.apt:
+      name: mariadb-server
+      state: present
+      update_cache: true
+
+  - name: Instalar Python-mysql
+    ansible.builtin.apt:
+      name: python3-mysqldb
+      state: present
+      update_cache: true
+      
+  - name: Asegurarse de que el servicio MariaDB está en ejecución
+    ansible.builtin.systemd_service:
+      name: mariadb
+      state: started
+      enabled: true
+
+## MySQL-Secure-Intalation
+  - name: Configurar el archivo de configuración de MariaDB
+    ansible.builtin.lineinfile:
+      path: /etc/mysql/mariadb.conf.d/50-server.cnf
+      regexp: '^bind-address'
+      line: 'bind-address = 0.0.0.0'
+    notify:
+      - Reiniciar MariaDB
+
+  - name: Configurar la contraseña de root de MariaDB
+    community.mysql.mysql_user:
+      name: root
+      password: dbroot
+      host: localhost
+      login_user: root
+      login_password: dbroot
+      state: present
+      update_password: always
+    notify:
+      - Reiniciar MariaDB
+
+  - name: Eliminar la base de datos de prueba
+    community.mysql.mysql_db:
+      name: test
+      state: absent
+      login_user: root
+      login_password: dbroot
+      login_host: localhost
+
+  - name: Eliminar usuarios anónimos
+    community.mysql.mysql_user:
+      name: ''
+      state: absent
+      host: localhost
+      login_user: root
+      login_password: dbroot
+    notify:
+      - Reiniciar MariaDB
+
+  handlers:
+  - name: Reiniciar MariaDB
+    ansible.builtin.systemd_service:
+      name: mariadb
+      state: restarted

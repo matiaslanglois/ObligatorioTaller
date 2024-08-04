@@ -1,0 +1,47 @@
+---
+
+- name: Se instala tomcat apache y la aplicacion web
+  hosts: webapp
+  become: true
+  user: sysadmin
+
+  tasks:
+
+  - name: Instalar Java 11
+    ansible.builtin.dnf:
+      name: java-11-openjdk
+      state: installed
+    
+  - name: Descargar Tomcat
+    ansible.builtin.get_url:
+      url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.91/bin/apache-tomcat-9.0.91.tar.gz
+      dest: /tmp/apache-tomcat-9.0.91.tar.gz
+
+  - name: Descomprimir Tomcat
+    ansible.builtin.unarchive:
+      src: /tmp/apache-tomcat-9.0.91.tar.gz
+      dest: /opt/
+      remote_src: yes
+
+  - name: Crear enlace simbólico para Tomcat
+    ansible.builtin.file:
+      src: /opt/apache-tomcat-9.0.91
+      dest: /opt/tomcat
+      state: link
+
+  - name: Copiar de archivo todo.war
+    ansible.builtin.copy:
+      src: /home/sysadmin/ObligatorioTaller/config/todo.war
+      dest: /opt/tomcat/webapps/
+
+  - name: Crear directorio para configuracion de base de datos
+    ansible.builtin.file:
+      path: /opt/config
+      state: directory
+      mode: '0755'
+
+  - name: copiar de archivo app.properties
+    ansible.builtin.copy:
+      src: /home/sysadmin/ObligatorioTaller/config/app.properties
+      dest: /opt/config/
+      

@@ -1,0 +1,50 @@
+---
+
+- name: Se crea el servicio Tomcat
+  hosts: webapp
+  become: true
+  user: sysadmin
+
+  tasks:
+
+  - name: Crear usuario Tomcat
+    ansible.builtin.user:
+      name: tomcat
+      group: tomcat
+      shell: /sbin/nologin
+      state: present
+
+  - name: Crear Grupo Tomcat
+    ansible.builtin.group:
+      name: tomcat
+      state: present
+
+  - name: Se configura los permisos y dueños del directorio Tomcat
+    ansible.builtin.file:
+      path: /opt/tomcat
+      owner: tomcat
+      group: tomcat
+      mode: '0755'
+      recurse: yes
+      state: directory
+
+  - name: Copiar archivo tomcat.service
+    ansible.builtin.copy:
+      src: /home/sysadmin/ObligatorioTaller/config/tomcat.service
+      dest: /etc/systemd/system/tomcat.service
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Recargar los servicios
+    ansible.builtin.command: systemctl daemon-reload
+
+  - name: Habilitar servicio Tomcat
+    ansible.builtin.systemd:
+      name: tomcat
+      enabled: yes
+
+  - name: Prender el servico Tomcat
+    ansible.builtin.systemd:
+      name: tomcat
+      state: started

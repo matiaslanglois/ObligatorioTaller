@@ -1,0 +1,17 @@
+---
+
+- name: Importar playbooks
+  hosts: localhost
+
+- name: Configuracion de firewall en CentOS
+  ansible.builtin.import_playbook: security_centos.yml
+- name: Configuracion de firewall en ubuntu
+  ansible.builtin.import_playbook: security_ubuntu.yml
+- name: Configuracion de WebApp
+  ansible.builtin.import_playbook: web.yml
+- name: Configuracion de servicio Tomcat
+  ansible.builtin.import_playbook: tomcat_service.yml
+- name: Configuracion de database
+  ansible.builtin.import_playbook: database.yml
+- name: Creacion de la base de datos
+  ansible.builtin.import_playbook: todo.yml
