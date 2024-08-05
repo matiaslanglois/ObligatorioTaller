@@ -31,7 +31,7 @@
 
   - name: Copiar de archivo todo.war
     ansible.builtin.copy:
-      src: /home/sysadmin/ObligatorioTaller/config/todo.war
+      src: ./files/todo.war
       dest: /opt/tomcat/webapps/
 
   - name: Crear directorio para configuracion de base de datos
@@ -42,6 +42,6 @@
 
   - name: copiar de archivo app.properties
     ansible.builtin.copy:
-      src: /home/sysadmin/ObligatorioTaller/config/app.properties
+      src: ./files/app.properties
       dest: /opt/config/
       
