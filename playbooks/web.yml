@@ -10,8 +10,13 @@
   - name: Instalar Java 11
     ansible.builtin.dnf:
       name: java-11-openjdk
-      state: installed
+      state: present
     
+  - name: Instalar Tar
+    ansible.builtin.dnf:
+      name: tar
+      state: present
+  
   - name: Descargar Tomcat
     ansible.builtin.get_url:
       url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.91/bin/apache-tomcat-9.0.91.tar.gz
@@ -21,13 +26,14 @@
     ansible.builtin.unarchive:
       src: /tmp/apache-tomcat-9.0.91.tar.gz
       dest: /opt/
-      remote_src: yes
+      remote_src: true
 
   - name: Crear enlace simbólico para Tomcat
     ansible.builtin.file:
       src: /opt/apache-tomcat-9.0.91
       dest: /opt/tomcat
       state: link
+      force: true
 
   - name: Copiar de archivo todo.war
     ansible.builtin.copy:

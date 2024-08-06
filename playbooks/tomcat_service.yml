@@ -25,7 +25,7 @@
       owner: tomcat
       group: tomcat
       mode: '0755'
-      recurse: yes
+      recurse: true
       state: directory
 
   - name: Copiar archivo tomcat.service
@@ -40,11 +40,11 @@
     ansible.builtin.command: systemctl daemon-reload
 
   - name: Habilitar servicio Tomcat
-    ansible.builtin.systemd:
+    ansible.builtin.systemd_service:
       name: tomcat
-      enabled: yes
+      enabled: true
 
   - name: Prender el servico Tomcat
-    ansible.builtin.systemd:
+    ansible.builtin.systemd_service:
       name: tomcat
       state: started

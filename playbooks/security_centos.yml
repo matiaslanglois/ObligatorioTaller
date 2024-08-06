@@ -14,22 +14,22 @@
   - name: Abrir puerto SSH
     ansible.posix.firewalld:
       port: 22/tcp
-      permanent: yes
+      permanent: true
       state: enabled
     notify: Reiniciar firewalld para aplicar los cambios
 
   - name: Abrir puerto del tomcat
     ansible.posix.firewalld:
       port: 8080/tcp
-      permanent: yes
+      permanent: true
       state: enabled
     notify: Reiniciar firewalld para aplicar los cambios
 
   - name: Asegurarse de que firewalld esté en ejecución
-    ansible.builtin.systemd:
+    ansible.builtin.systemd_service:
       name: firewalld
       state: started
-      enabled: yes
+      enabled: true
 
   handlers:
   - name: Reiniciar firewalld para aplicar los cambios

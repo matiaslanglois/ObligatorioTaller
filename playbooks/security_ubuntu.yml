@@ -37,7 +37,7 @@
       direction: in
 
   - name: servicio ufw levantado y activo
-    ansible.builtin.systemd.service:
+    ansible.builtin.systemd_service:
       name: ufw
       state: started
       enabled: true
